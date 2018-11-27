@@ -1,6 +1,6 @@
 from alg.ptwise import ptwise_gskyline
 from alg.skyline_layer import skyline_layer_2d, split_layer, cal_parent_child, skyline_layer_md
-from data_gen import gen_example
+from data_gen import gen_example, gen_csv
 from entity.DSG import DSG
 
 
@@ -38,8 +38,8 @@ def get_pt_by_label(pts, label):
 
 
 if __name__ == '__main__':
-    pts = gen_example()
     k = 4
+    pts = gen_csv('/Users/koutakashi/codes/G-Skyline/data/anti_2.txt', 10000)
     test_2d(pts, 4)
     pts = gen_example()
     test_md(pts, 4)

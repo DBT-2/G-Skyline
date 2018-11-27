@@ -1,5 +1,5 @@
 from entity.Point import Point
-
+import csv
 
 def data_cmp(o1, o2):
     if o1[0] < o2[0]:
@@ -22,3 +22,28 @@ def gen_example():
         pts.append(pt)
         i = i + 1
     return pts
+
+
+def gen_csv(filename, size):
+    data = [None] * size
+    pts = [None] * size
+    i = 0
+    with open(filename) as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+        for row in spamreader:
+            data[i] = row
+            i = i + 1
+    data = [[float(x) for x in row] for row in data]
+    data.sort(data_cmp)
+
+    i = 0
+    for d in data:
+        pt = Point(i, d, i)
+        pts[i] = pt
+        i = i + 1
+    return pts
+
+
+if __name__ == '__main__':
+    rst = gen_csv('/Users/koutakashi/codes/G-Skyline/data/anti_2.txt', 10000)
+    print(rst)
