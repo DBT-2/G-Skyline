@@ -60,9 +60,9 @@ class Point:
         field_num = len(self._fields)
         has_less_value = False
         for i in range(0, field_num):
-            if self._fields[i] > other.field_list[i]:
+            if self._fields[i] > other.field_list()[i]:
                 return False
-            elif self._fields[i] < other.field_list[i]:
+            elif self._fields[i] < other.field_list()[i]:
                 has_less_value = True
         return has_less_value
 
