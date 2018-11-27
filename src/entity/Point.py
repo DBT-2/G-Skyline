@@ -56,6 +56,16 @@ class Point:
             u_group = u_group.union(parent.union_group())
         return u_group
 
+    def dominate(self, other):
+        field_num = len(self._fields)
+        has_less_value = False
+        for i in range(0, field_num):
+            if self._fields[i] > other.field_list[i]:
+                return False
+            elif self._fields[i] < other.field_list[i]:
+                has_less_value = True
+        return has_less_value
+
     # compare by index
     def __lt__(self, other):
         if isinstance(other, Point):
