@@ -1,10 +1,16 @@
+#coding=utf-8
+
 class Point:
     def __init__(self, index, fields, label=-1):
         self._unit_group = None
+        #Point的顺序
         self._index = index
+        #Point的维度
         self._fields = fields
+        #Point的父亲节点和孩子节点
         self._children = set()
         self._parents = set()
+        #Point的层次
         self._layer = 0
         self._label = label
         return
@@ -45,13 +51,13 @@ class Point:
         else:
             self._unit_group = self.cal_unit_group()
             return self._unit_group
-
+    #递归调用parent集合计算unitGroup
     def cal_unit_group(self):
         u_group = {self}
         for parent in self._parents:
             u_group = u_group.union(parent.unit_group())
         return u_group
-
+    #定义dominate关系
     def dominate(self, other):
         field_num = len(self._fields)
         has_less_value = False
