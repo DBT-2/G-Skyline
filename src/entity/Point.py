@@ -27,6 +27,9 @@ class Point:
     def index(self):
         return self._index
 
+    def set_index(self, index):
+        self._index = index
+
     def is_skyline(self):
         return self._layer == 0
 

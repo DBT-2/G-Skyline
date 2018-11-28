@@ -1,8 +1,6 @@
-import bisect
 from time import time
 
 from conf.config import logger
-from entity.GroupTree import GroupTreeNode
 from entity.SkylineGroup import SkylineGroup
 
 
@@ -15,8 +13,6 @@ def ptwise_gskyline(dsg, k):
     current = SkylineGroup(0)
     curr_level_groups = [current]
     next_level_groups = []
-    # create a tree for existence test
-    root = GroupTreeNode()
     # generate each level
     for i in range(1, k + 1):
         t = time()
@@ -28,18 +24,16 @@ def ptwise_gskyline(dsg, k):
             # logger.debug("children set: %s", children_set)
 
             t_set = curr_group.tail_set(dsg)
-            # logger.debug("tail set: %s", t_set)
+            # logger.debug("tail set before: %s", t_set)
             filter_tail_set(t_set, children_set, max_layer)
             # logger.debug("tail set size : %d", len(t_set))
-            # logger.debug("tail set: %s", t_set)
+            # logger.debug("tail set after: %s", t_set)
 
             for pt in t_set:
                 new_group = SkylineGroup(i)
                 new_pts = list(curr_group.pts())
+                new_pts.append(pt)
 
-                add_pt(new_pts, pt)
-                if group_exist(root, new_pts):
-                    continue
                 # logger.debug("curr min index: %d, new index: %d", curr_group.max_index(), pt.index())
                 max_index = curr_group.max_index()
                 max_index = max_index if max_index > pt.index() else pt.index()
@@ -66,19 +60,10 @@ def ptwise_gskyline(dsg, k):
         curr_level_groups = next_level_groups
         next_level_groups = []
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
-        # logger.info("Level %d : %s", i, curr_level_groups)
+        logger.info("Level %d : %s", i, curr_level_groups)
     for group in final_groups:
         curr_level_groups.append(group)
     return curr_level_groups
-
-
-def add_pt(new_pts, pt):
-    idx = bisect.bisect_left(new_pts, pt)
-    new_pts.insert(idx, pt)
-
-
-def group_exist(root, new_pts):
-    return not root.insert(new_pts)
 
 
 def filter_tail_set(t_set, children_set, max_layer):
@@ -110,9 +95,6 @@ def preprocess(dsg, k):
     to_remove = []
     final_groups = []
     for pt in pt_list:
-        if pt.layer() >= k:
-            to_remove.append(pt)
-            continue
         u_group = pt.unit_group()
         if len(u_group) > k:
             to_remove.append(pt)
@@ -125,8 +107,13 @@ def preprocess(dsg, k):
     logger.info("removed %d points because their union group sizes exceed k or beyond kth layer", len(to_remove))
     for pt in to_remove:
         pt_list.remove(pt)
+    reindex(pt_list)
     dsg.set_list(pt_list)
 
     logger.info("preprocess consumed %fs", time() - t)
     return final_groups
 
+
+def reindex(pts):
+    for i in range(0, len(pts)):
+        pts[i].set_index(i)

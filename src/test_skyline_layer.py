@@ -5,7 +5,8 @@ from entity.DSG import DSG
 
 
 def test_2d(pts, k):
-    skyline_layer_2d(pts, k)
+    pts = skyline_layer_2d(pts, k)
+    reindex(pts)
     layers = split_layer(pts, k)
     cal_parent_child(layers, k)
 
@@ -19,7 +20,8 @@ def test_2d(pts, k):
 
 
 def test_md(pts, k):
-    layers = skyline_layer_md(pts, k)
+    layers, pts = skyline_layer_md(pts, k)
+    reindex(pts)
     cal_parent_child(layers, k)
 
     # print('index', 'label', 'layer', 'children')
@@ -35,6 +37,11 @@ def get_pt_by_label(pts, label):
     for pt in pts:
         if pt.label() == label:
             return pt
+
+
+def reindex(pts):
+    for i in range(0, len(pts)):
+        pts[i].set_index(i)
 
 
 if __name__ == '__main__':

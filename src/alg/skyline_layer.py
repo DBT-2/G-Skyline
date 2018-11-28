@@ -47,6 +47,13 @@ def skyline_layer_2d(pt_list, k):
             pt_list[i].set_layer(pos)
             tails[pos] = pt_list[i]
     logger.info('2D skyline layer consumed: %fs', time()-t)
+    new_list = []
+    for pt in pt_list:
+        if pt.layer() < k:
+            new_list.append(pt)
+    new_list.sort()
+    return new_list
+
 
 def skyline_layer_md(pt_list, k):
     """
@@ -61,8 +68,8 @@ def skyline_layer_md(pt_list, k):
 
     pt_list.sort(pt_cmp)
     pt_list[0].set_layer(0)
-    layers = []
-    for pt_index in range(0, k):
+    layers = [[pt_list[0]]]
+    for pt_index in range(1, k):
         layers.append([])
 
     n = len(pt_list)
@@ -82,7 +89,13 @@ def skyline_layer_md(pt_list, k):
         if not find_layer:
             pt_list[pt_index].set_layer(k)
     logger.info('2D skyline layer consumed: %fs', time()-t)
-    return layers
+
+    pts = []
+    for layer in layers:
+        for pt in layer:
+            pts.append(pt)
+    pts.sort()
+    return layers, pts
 
 
 def bin_dom_search(tails, pt):
