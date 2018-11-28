@@ -12,7 +12,7 @@ def test_2d(pts, k):
 
     # print('index', 'label', 'layer', 'children')
     # for pt in pts:
-    #     print(pt.index(), pt.label(), pt.layer(), pt.children())
+    #     print(pt.index, pt.label(), pt.layer(), pt.children())
 
     dsg = DSG(pts)
     groups = ptwise_gskyline(dsg, k)
@@ -26,7 +26,7 @@ def test_md(pts, k):
 
     # print('index', 'label', 'layer', 'children')
     # for pt in pts:
-    #     print(pt.index(), pt.label(), pt.layer(), pt.children())
+    #     print(pt.index, pt.label(), pt.layer(), pt.children())
 
     dsg = DSG(pts)
     groups = ptwise_gskyline(dsg, k)
@@ -41,7 +41,7 @@ def get_pt_by_label(pts, label):
 
 def reindex(pts):
     for i in range(0, len(pts)):
-        pts[i].set_index(i)
+        pts[i].index = i
 
 
 if __name__ == '__main__':

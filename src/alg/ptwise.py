@@ -4,6 +4,15 @@ from conf.config import logger
 from entity.SkylineGroup import SkylineGroup
 
 
+def can_add(curr_group, pt):
+    pts = curr_group.pts()
+    parents = pt.parents()
+    for parent in parents:
+        if parent not in pts:
+            return False
+    return True
+
+
 def ptwise_gskyline(dsg, k):
     logger.debug("Start point-wise group skyline...")
     # preprocess dsg
@@ -30,17 +39,19 @@ def ptwise_gskyline(dsg, k):
             # logger.debug("tail set after: %s", t_set)
 
             for pt in t_set:
-                new_group = SkylineGroup(i)
-                new_pts = list(curr_group.pts())
-                new_pts.append(pt)
+                if not can_add(curr_group, pt):
+                    continue
 
-                # logger.debug("curr min index: %d, new index: %d", curr_group.max_index(), pt.index())
+                new_group = SkylineGroup(i)
+                new_pts = set(curr_group.pts())
+                new_pts.add(pt)
+
+                # logger.debug("curr min index: %d, new index: %d", curr_group.max_index(), pt.index)
                 max_index = curr_group.max_index()
-                max_index = max_index if max_index > pt.index() else pt.index()
+                max_index = max_index if max_index > pt.index else pt.index
 
                 # update children set and max_layer instead of recalculating them
-                new_children_set = children_set.copy()
-                new_children_set = new_children_set.union(pt.children())
+                new_children_set = children_set.union(pt.children())
                 new_max_layer = max_layer
                 if pt.layer() > new_max_layer:
                     new_max_layer = pt.layer()
@@ -52,15 +63,11 @@ def ptwise_gskyline(dsg, k):
                 # logger.debug("new set: %s", new_pts)
                 # logger.debug("new_min_index: %s", max_index)
 
-                if is_skyline_group(new_group):
-                    # logger.debug("%s is a skyline group", new_group)
-                    next_level_groups.append(new_group)
-                # else:
-                    # logger.debug("%s is NOT a skyline group", new_group)
+                next_level_groups.append(new_group)
         curr_level_groups = next_level_groups
         next_level_groups = []
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
-        logger.info("Level %d : %s", i, curr_level_groups)
+        # logger.info("Level %d : %s", i, curr_level_groups)
     for group in final_groups:
         curr_level_groups.append(group)
     return curr_level_groups
@@ -76,16 +83,6 @@ def filter_tail_set(t_set, children_set, max_layer):
     for pt in to_remove:
         t_set.remove(pt)
     logger.debug("%d points filtered", len(to_remove))
-
-
-def is_skyline_group(group):
-    # TODO optimize?
-    pt_set = set(group.pts())
-    for pt in group.pts():
-        for parent in pt.parents():
-            if parent not in pt_set:
-                return False
-    return True
 
 
 def preprocess(dsg, k):
@@ -116,4 +113,4 @@ def preprocess(dsg, k):
 
 def reindex(pts):
     for i in range(0, len(pts)):
-        pts[i].set_index(i)
+        pts[i].index = i

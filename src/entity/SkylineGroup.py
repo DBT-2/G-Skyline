@@ -11,8 +11,8 @@ class SkylineGroup:
     def add(self, point):
         self._pts.append(point)
         self._pts.sort()
-        if self._max_index > point.index():
-            self._max_index = point.index()
+        if self._max_index > point.index:
+            self._max_index = point.index
 
     # point_list must be sorted by index of points
     def set_points(self, points):
@@ -80,5 +80,5 @@ class SkylineGroup:
         # return hash(str(self._set))
         h = len(self._pts)
         for pt in self._pts:
-            h = h ^ pt.index()
+            h = h ^ pt.index
         return h
