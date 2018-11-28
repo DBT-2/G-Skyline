@@ -1,4 +1,4 @@
 import logging as logger
 
-logger.basicConfig(level="INFO")
+logger.basicConfig(level="DEBUG")
 

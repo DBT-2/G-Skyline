@@ -54,7 +54,7 @@ def ptwise_gskyline(dsg, k):
                 new_max_layer = max_layer
                 if pt.layer() > new_max_layer:
                     new_max_layer = pt.layer()
-                new_group.update_children_set_lazy(pt)
+                new_group.set_children_set_lazy(pt, children_set)
                 new_group.set_max_layer(new_max_layer)
 
                 new_group.set_points(new_pts)

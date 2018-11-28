@@ -44,8 +44,8 @@ class SkylineGroup:
     def set_children_set(self, c_set):
         self._children_set = c_set
 
-    def update_children_set_lazy(self,  new_pt):
-        self._prev_children_set = self.children_set()
+    def set_children_set_lazy(self,  new_pt,  prev_children_set):
+        self._prev_children_set = prev_children_set
         self._new_pt = new_pt
         self._children_set = None
 
@@ -59,6 +59,7 @@ class SkylineGroup:
     def _cal_children_set(self):
         if self._prev_children_set is not None:
             self._children_set = self._prev_children_set.union(self._new_pt.children())
+            self._prev_children_set = None
             return
         self._children_set = set()
         for pt in self._pts:
