@@ -47,18 +47,19 @@ def ptwise_gskyline(dsg, k):
                 new_pts.add(pt)
 
                 # logger.debug("curr min index: %d, new index: %d", curr_group.max_index(), pt.index)
-                max_index = curr_group.max_index()
-                max_index = max_index if max_index > pt.index else pt.index
+                if i < k:
+                    max_index = curr_group.max_index()
+                    max_index = max_index if max_index > pt.index else pt.index
 
-                # update children set and max_layer instead of recalculating them
-                new_max_layer = max_layer
-                if pt.layer() > new_max_layer:
-                    new_max_layer = pt.layer()
-                new_group.set_children_set_lazy(pt, children_set)
-                new_group.set_max_layer(new_max_layer)
+                    # update children set and max_layer instead of recalculating them
+                    new_max_layer = max_layer
+                    if pt.layer() > new_max_layer:
+                        new_max_layer = pt.layer()
+                    new_group.set_children_set(children_set.union(pt.children()))
+                    new_group.set_max_layer(new_max_layer)
 
-                new_group.set_points(new_pts)
-                new_group.set_max_index(max_index)
+                    new_group.set_points(new_pts)
+                    new_group.set_max_index(max_index)
                 # logger.debug("new set: %s", new_pts)
                 # logger.debug("new_min_index: %s", max_index)
 
