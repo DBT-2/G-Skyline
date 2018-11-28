@@ -3,7 +3,7 @@ class SkylineGroup:
     def __init__(self, level):
         self.level = level
         self._pts = []
-        self._min_index = 1 << 63 - 1
+        self._max_index = -1
         self._children_set = None
         self._max_layer = -1
         self._tail_set = None
@@ -11,8 +11,8 @@ class SkylineGroup:
     def add(self, point):
         self._pts.append(point)
         self._pts.sort()
-        if self._min_index > point.index():
-            self._min_index = point.index()
+        if self._max_index > point.index():
+            self._max_index = point.index()
 
     # point_list must be sorted by index of points
     def set_points(self, points):
@@ -26,12 +26,12 @@ class SkylineGroup:
     def pts(self):
         return self._pts
 
-    def min_index(self):
-        return self._min_index
+    def max_index(self):
+        return self._max_index
 
-    def set_min_index(self, index):
-        if index <= self._min_index:
-            self._min_index = index
+    def set_max_index(self, index):
+        if index > self._max_index:
+            self._max_index = index
 
     def children_set(self):
         if self._children_set is None:
@@ -62,17 +62,17 @@ class SkylineGroup:
 
     def _cal_tail_set(self, dsg):
         # TODO this can be optimized by reusing parents' tail_set?
-        t_set = dsg.tail_set(self._min_index)
+        t_set = dsg.tail_set(self._max_index)
         t_set = set(t_set)
-        for pt in self.pts():
-            t_set.remove(pt)
+        # for pt in self.pts():
+        #     t_set.remove(pt)
         return t_set
 
     def __repr__(self):
         return str(self._pts)
 
     def __eq__(self, other):
-        return self.level == other.level and self._min_index == other.min_index() \
+        return self.level == other.level and self._max_index == other.max_index() \
                and self._max_layer == other.max_layer() and self._pts == other.pts()
 
     def __hash__(self):

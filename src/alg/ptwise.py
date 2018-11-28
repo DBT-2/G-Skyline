@@ -37,13 +37,12 @@ def ptwise_gskyline(dsg, k):
                 new_group = SkylineGroup(i)
                 new_pts = list(curr_group.pts())
 
-                idx = bisect.bisect_left(new_pts, pt)
-                new_pts.insert(idx, pt)
-                if not root.insert(new_pts):
+                add_pt(new_pts, pt)
+                if group_exist(root, new_pts):
                     continue
-                # logger.debug("curr min index: %d, new index: %d", curr_group.min_index(), pt.index())
-                min_index = curr_group.min_index()
-                min_index = min_index if min_index < pt.index() else pt.index()
+                # logger.debug("curr min index: %d, new index: %d", curr_group.max_index(), pt.index())
+                max_index = curr_group.max_index()
+                max_index = max_index if max_index > pt.index() else pt.index()
 
                 # update children set and max_layer instead of recalculating them
                 new_children_set = children_set.copy()
@@ -55,9 +54,9 @@ def ptwise_gskyline(dsg, k):
                 new_group.set_max_layer(new_max_layer)
 
                 new_group.set_points(new_pts)
-                new_group.set_min_index(min_index)
+                new_group.set_max_index(max_index)
                 # logger.debug("new set: %s", new_pts)
-                # logger.debug("new_min_index: %s", min_index)
+                # logger.debug("new_min_index: %s", max_index)
 
                 if is_skyline_group(new_group):
                     # logger.debug("%s is a skyline group", new_group)
@@ -67,10 +66,19 @@ def ptwise_gskyline(dsg, k):
         curr_level_groups = next_level_groups
         next_level_groups = []
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
-        # logger.debug("Level %d : %s", i, curr_level_groups)
+        # logger.info("Level %d : %s", i, curr_level_groups)
     for group in final_groups:
         curr_level_groups.append(group)
     return curr_level_groups
+
+
+def add_pt(new_pts, pt):
+    idx = bisect.bisect_left(new_pts, pt)
+    new_pts.insert(idx, pt)
+
+
+def group_exist(root, new_pts):
+    return not root.insert(new_pts)
 
 
 def filter_tail_set(t_set, children_set, max_layer):
@@ -102,6 +110,9 @@ def preprocess(dsg, k):
     to_remove = []
     final_groups = []
     for pt in pt_list:
+        if pt.layer() >= k:
+            to_remove.append(pt)
+            continue
         u_group = pt.unit_group()
         if len(u_group) > k:
             to_remove.append(pt)
@@ -111,7 +122,7 @@ def preprocess(dsg, k):
             final_groups.append(skyline_group)
             to_remove.append(pt)
 
-    logger.info("removed points because their union group sizes exceed k : %s", to_remove)
+    logger.info("removed %d points because their union group sizes exceed k or beyond kth layer", len(to_remove))
     for pt in to_remove:
         pt_list.remove(pt)
     dsg.set_list(pt_list)
