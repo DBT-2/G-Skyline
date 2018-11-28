@@ -1,6 +1,8 @@
+import bisect
 from time import time
 
 from conf.config import logger
+from entity.GroupTree import GroupTreeNode
 from entity.SkylineGroup import SkylineGroup
 
 
@@ -11,9 +13,10 @@ def ptwise_gskyline(dsg, k):
     logger.info("final %d groups after preprocess: %s", len(final_groups), final_groups)
     # generate level 0
     current = SkylineGroup(0)
-    curr_level_groups = {current}
-    next_level_groups = set()
-
+    curr_level_groups = [current]
+    next_level_groups = []
+    # create a tree for existence test
+    root = GroupTreeNode()
     # generate each level
     for i in range(1, k + 1):
         t = time()
@@ -32,8 +35,12 @@ def ptwise_gskyline(dsg, k):
 
             for pt in t_set:
                 new_group = SkylineGroup(i)
-                new_set = curr_group.set().copy()
-                new_set.add(pt)
+                new_pts = list(curr_group.pts())
+
+                idx = bisect.bisect_left(new_pts, pt)
+                new_pts.insert(idx, pt)
+                if not root.insert(new_pts):
+                    continue
                 # logger.debug("curr min index: %d, new index: %d", curr_group.min_index(), pt.index())
                 min_index = curr_group.min_index()
                 min_index = min_index if min_index < pt.index() else pt.index()
@@ -47,23 +54,22 @@ def ptwise_gskyline(dsg, k):
                 new_group.set_children_set(new_children_set)
                 new_group.set_max_layer(new_max_layer)
 
-                new_group.set_points(new_set)
+                new_group.set_points(new_pts)
                 new_group.set_min_index(min_index)
-                # logger.debug("new set: %s", new_set)
+                # logger.debug("new set: %s", new_pts)
                 # logger.debug("new_min_index: %s", min_index)
 
                 if is_skyline_group(new_group):
                     # logger.debug("%s is a skyline group", new_group)
-                    next_level_groups.add(new_group)
+                    next_level_groups.append(new_group)
                 # else:
                     # logger.debug("%s is NOT a skyline group", new_group)
         curr_level_groups = next_level_groups
-        next_level_groups = set()
+        next_level_groups = []
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
         # logger.debug("Level %d : %s", i, curr_level_groups)
-
     for group in final_groups:
-        curr_level_groups.add(group)
+        curr_level_groups.append(group)
     return curr_level_groups
 
 
@@ -81,8 +87,8 @@ def filter_tail_set(t_set, children_set, max_layer):
 
 def is_skyline_group(group):
     # TODO optimize?
-    pt_set = set(group.set())
-    for pt in group.set():
+    pt_set = set(group.pts())
+    for pt in group.pts():
         for parent in pt.parents():
             if parent not in pt_set:
                 return False

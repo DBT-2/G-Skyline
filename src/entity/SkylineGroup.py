@@ -2,28 +2,29 @@ class SkylineGroup:
 
     def __init__(self, level):
         self.level = level
-        self._set = set()
+        self._pts = []
         self._min_index = 1 << 63 - 1
         self._children_set = None
         self._max_layer = -1
         self._tail_set = None
 
     def add(self, point):
-        self._set.add(point)
+        self._pts.append(point)
+        self._pts.sort()
         if self._min_index > point.index():
             self._min_index = point.index()
 
     # point_list must be sorted by index of points
     def set_points(self, points):
         if isinstance(points, list):
-            self._set = set(points)
+            self._pts = set(points)
         elif isinstance(points, set):
-            self._set = points
+            self._pts = points
         else:
             raise TypeError(type(points))
 
-    def set(self):
-        return self._set
+    def pts(self):
+        return self._pts
 
     def min_index(self):
         return self._min_index
@@ -49,7 +50,7 @@ class SkylineGroup:
 
     def _cal_children_set(self):
         self._children_set = set()
-        for pt in self._set:
+        for pt in self._pts:
             self._children_set = self._children_set.union(pt.children())
             if pt.layer() > self._max_layer:
                 self._max_layer = pt.layer()
@@ -63,20 +64,21 @@ class SkylineGroup:
         # TODO this can be optimized by reusing parents' tail_set?
         t_set = dsg.tail_set(self._min_index)
         t_set = set(t_set)
-        for pt in self.set():
+        for pt in self.pts():
             t_set.remove(pt)
         return t_set
 
     def __repr__(self):
-        return str(self._set)
+        return str(self._pts)
 
     def __eq__(self, other):
-        return self._set == other.set()
+        return self.level == other.level and self._min_index == other.min_index() \
+               and self._max_layer == other.max_layer() and self._pts == other.pts()
 
     def __hash__(self):
         # TODO optimize?
         # return hash(str(self._set))
-        h = 0
-        for pt in self._set:
+        h = len(self._pts)
+        for pt in self._pts:
             h = h ^ pt.index()
         return h

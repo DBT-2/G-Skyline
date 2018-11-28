@@ -79,6 +79,21 @@ class Point:
         else:
             return False
 
+    def __cmp__(self, other):
+        o_idx = 0
+        if isinstance(other, Point):
+            o_idx = other.index()
+        elif isinstance(other, int):
+            o_idx = other
+        else:
+            raise TypeError(type(other))
+        if self._index < o_idx:
+            return -1
+        elif self._index == o_idx:
+            return 0
+        else:
+            return 1
+
     def __hash__(self):
         return hash(self._index)
 

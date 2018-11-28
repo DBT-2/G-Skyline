@@ -39,7 +39,7 @@ def get_pt_by_label(pts, label):
 
 if __name__ == '__main__':
     k = 4
-    pts = gen_csv('/Users/koutakashi/codes/G-Skyline/data/anti_2.txt', 100)
+    pts = gen_csv('/Users/koutakashi/codes/G-Skyline/data/anti_2.txt', 500)
     test_2d(pts, 4)
     pts = gen_example()
     test_md(pts, 4)
