@@ -7,6 +7,9 @@ class SkylineGroup:
         self._children_set = None
         self._max_layer = -1
         self._tail_set = None
+        # for lazy calculation of children_set
+        self._prev_children_set = None
+        self._new_pt = None
 
     def add(self, point):
         self._pts.append(point)
@@ -41,6 +44,11 @@ class SkylineGroup:
     def set_children_set(self, c_set):
         self._children_set = c_set
 
+    def update_children_set_lazy(self,  new_pt):
+        self._prev_children_set = self.children_set()
+        self._new_pt = new_pt
+        self._children_set = None
+
     # max_layer must not be called before _max_layer is set
     def max_layer(self):
         return self._max_layer
@@ -49,6 +57,9 @@ class SkylineGroup:
         self._max_layer = layer
 
     def _cal_children_set(self):
+        if self._prev_children_set is not None:
+            self._children_set = self._prev_children_set.union(self._new_pt.children())
+            return
         self._children_set = set()
         for pt in self._pts:
             self._children_set = self._children_set.union(pt.children())

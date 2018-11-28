@@ -51,11 +51,10 @@ def ptwise_gskyline(dsg, k):
                 max_index = max_index if max_index > pt.index else pt.index
 
                 # update children set and max_layer instead of recalculating them
-                new_children_set = children_set.union(pt.children())
                 new_max_layer = max_layer
                 if pt.layer() > new_max_layer:
                     new_max_layer = pt.layer()
-                new_group.set_children_set(new_children_set)
+                new_group.update_children_set_lazy(pt)
                 new_group.set_max_layer(new_max_layer)
 
                 new_group.set_points(new_pts)
