@@ -7,7 +7,7 @@ def ptwise_gskyline(dsg, k):
     logger.debug("Start point-wise group skyline...")
     # preprocess dsg
     final_groups = preprocess(dsg, k)
-    logger.info("final groups after preprocess: %s", final_groups)
+    logger.info("final %d groups after preprocess: %s", len(final_groups), final_groups)
     # generate level 0
     current = SkylineGroup(0)
     curr_level_groups = {current}
@@ -18,22 +18,22 @@ def ptwise_gskyline(dsg, k):
         t = time()
 
         for curr_group in curr_level_groups:
-            logger.debug("current group: %s", curr_group)
+            # logger.debug("current group: %s", curr_group)
             children_set = curr_group.children_set()
             max_layer = curr_group.max_layer()
-            logger.debug("children set: %s", children_set)
+            # logger.debug("children set: %s", children_set)
 
             t_set = curr_group.tail_set(dsg)
-            logger.debug("tail set: %s", t_set)
+            # logger.debug("tail set: %s", t_set)
             filter_tail_set(t_set, children_set, max_layer)
-            logger.debug("tail set size : %d", len(t_set))
-            logger.debug("tail set: %s", t_set)
+            # logger.debug("tail set size : %d", len(t_set))
+            # logger.debug("tail set: %s", t_set)
 
             for pt in t_set:
                 new_group = SkylineGroup(i)
                 new_set = curr_group.set().copy()
                 new_set.add(pt)
-                logger.debug("curr min index: %d, new index: %d", curr_group.min_index(), pt.index())
+                # logger.debug("curr min index: %d, new index: %d", curr_group.min_index(), pt.index())
                 min_index = curr_group.min_index()
                 min_index = min_index if min_index < pt.index() else pt.index()
 
@@ -48,18 +48,18 @@ def ptwise_gskyline(dsg, k):
 
                 new_group.set_points(new_set)
                 new_group.set_min_index(min_index)
-                logger.debug("new set: %s", new_set)
-                logger.debug("new_min_index: %s", min_index)
+                # logger.debug("new set: %s", new_set)
+                # logger.debug("new_min_index: %s", min_index)
 
                 if is_skyline_group(new_group):
-                    logger.debug("%s is a skyline group", new_group)
+                    # logger.debug("%s is a skyline group", new_group)
                     next_level_groups.add(new_group)
-                else:
-                    logger.debug("%s is NOT a skyline group", new_group)
+                # else:
+                    # logger.debug("%s is NOT a skyline group", new_group)
         curr_level_groups = next_level_groups
         next_level_groups = set()
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
-        logger.debug("Level %d : %s", i, curr_level_groups)
+        # logger.debug("Level %d : %s", i, curr_level_groups)
 
     for group in final_groups:
         curr_level_groups.add(group)
@@ -95,7 +95,7 @@ def preprocess(dsg, k):
     to_remove = []
     final_groups = []
     for pt in pt_list:
-        u_group = pt.union_group()
+        u_group = pt.unit_group()
         if len(u_group) > k:
             to_remove.append(pt)
         elif len(u_group) == k:

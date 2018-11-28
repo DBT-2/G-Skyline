@@ -1,6 +1,6 @@
 class Point:
     def __init__(self, index, fields, label=-1):
-        self._union_group = None
+        self._unit_group = None
         self._index = index
         self._fields = fields
         self._children = set()
@@ -43,17 +43,17 @@ class Point:
     def label(self):
         return self._label
 
-    def union_group(self):
-        if self._union_group is not None:
-            return self._union_group
+    def unit_group(self):
+        if self._unit_group is not None:
+            return self._unit_group
         else:
-            self._union_group = self.cal_union_group()
-            return self._union_group
+            self._unit_group = self.cal_unit_group()
+            return self._unit_group
 
-    def cal_union_group(self):
+    def cal_unit_group(self):
         u_group = {self}
         for parent in self._parents:
-            u_group = u_group.union(parent.union_group())
+            u_group = u_group.union(parent.unit_group())
         return u_group
 
     def dominate(self, other):

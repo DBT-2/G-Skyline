@@ -1,3 +1,7 @@
+from time import time
+from conf.config import logger
+
+
 def pt_cmp(pt0, pt1):
     if pt0.field_list()[0] < pt1.field_list()[0]:
         return -1
@@ -15,6 +19,8 @@ def skyline_layer_2d(pt_list, k):
     :param k:
     :return:
     """
+    t = time()
+
     pt_list.sort(pt_cmp)
     pt_list[0].set_layer(0)
     pt_list[0].set_skyline(True)
@@ -42,7 +48,7 @@ def skyline_layer_2d(pt_list, k):
             # print("find pos %d for %d" % (pos, pt_list[i].label()))
             pt_list[i].set_layer(pos)
             tails[pos] = pt_list[i]
-
+    logger.info('2D skyline layer consumed: %fs', time()-t)
 
 def skyline_layer_md(pt_list, k):
     """
@@ -53,6 +59,8 @@ def skyline_layer_md(pt_list, k):
     :param k:
     :return:
     """
+    t = time()
+
     pt_list.sort(pt_cmp)
     pt_list[0].set_layer(0)
     pt_list[0].set_skyline(True)
@@ -78,6 +86,7 @@ def skyline_layer_md(pt_list, k):
                 break  # break 'for layer_index'
         if not find_layer:
             pt_list[pt_index].set_layer(k)
+    logger.info('2D skyline layer consumed: %fs', time()-t)
     return layers
 
 

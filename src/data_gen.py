@@ -33,6 +33,8 @@ def gen_csv(filename, size):
         for row in spamreader:
             data[i] = row
             i = i + 1
+            if i >= size:
+                break
     data = [[float(x) for x in row] for row in data]
     data.sort(data_cmp)
 
