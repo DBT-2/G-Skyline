@@ -23,7 +23,6 @@ def skyline_layer_2d(pt_list, k):
 
     pt_list.sort(pt_cmp)
     pt_list[0].set_layer(0)
-    pt_list[0].set_skyline(True)
     max_layer = 0
     tails = [pt_list[0]]
     n = len(pt_list)
@@ -32,7 +31,6 @@ def skyline_layer_2d(pt_list, k):
         if not tails[0].dominate(pt_list[i]):
             # print("%d not dom %d" % (tails[0].label(), pt_list[i].label()))
             pt_list[i].set_layer(0)
-            pt_list[i].set_skyline(True)
             tails[0] = pt_list[i]
         elif tails[max_layer].dominate(pt_list[i]):
             # print("%d doms %d" % (tails[max_layer].label(), i))
@@ -63,7 +61,6 @@ def skyline_layer_md(pt_list, k):
 
     pt_list.sort(pt_cmp)
     pt_list[0].set_layer(0)
-    pt_list[0].set_skyline(True)
     layers = []
     for pt_index in range(0, k):
         layers.append([])
@@ -79,8 +76,6 @@ def skyline_layer_md(pt_list, k):
                     break  # break 'for pt'
             if not dominated:
                 pt_list[pt_index].set_layer(layer_index)
-                if layer_index == 0:
-                    pt_list[pt_index].set_skyline(True)
                 layers[layer_index].append(pt_list[pt_index])
                 find_layer = True
                 break  # break 'for layer_index'

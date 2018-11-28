@@ -5,7 +5,6 @@ class Point:
         self._fields = fields
         self._children = set()
         self._parents = set()
-        self._is_skyline = False
         self._layer = 0
         self._label = label
         return
@@ -28,11 +27,8 @@ class Point:
     def index(self):
         return self._index
 
-    def set_skyline(self, is_skyline):
-        self._is_skyline = is_skyline
-
     def is_skyline(self):
-        return self._is_skyline
+        return self._layer == 0
 
     def layer(self):
         return self._layer

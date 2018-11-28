@@ -3,6 +3,7 @@ from time import time
 from conf.config import logger
 from entity.SkylineGroup import SkylineGroup
 
+
 def ptwise_gskyline(dsg, k):
     logger.debug("Start point-wise group skyline...")
     # preprocess dsg

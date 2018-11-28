@@ -75,8 +75,8 @@ class SkylineGroup:
 
     def __hash__(self):
         # TODO optimize?
-        return hash(str(self._set))
-        # h = 0
-        # for pt in self._set:
-        #     h = h ^ pt.index()
-        # return h
+        # return hash(str(self._set))
+        h = 0
+        for pt in self._set:
+            h = h ^ pt.index()
+        return h
