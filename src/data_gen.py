@@ -21,7 +21,7 @@ def gen_example():
     pts = []
     i = 0
     for d in data:
-        pt = Point(i, d[0:2], d[2])
+        pt = Point(i, d[0:2])
         #print pt
         pts.append(pt)
         i = i + 1
@@ -47,13 +47,13 @@ def gen_csv(filename, size):
     i = 0
     for d in data:
         #TODO 生成点的时候，index和label相同的话，是不是可以废除label属性
-        pt = Point(i, d, i)
+        pt = Point(i, d)
         pts[i] = pt
         i = i + 1
     return pts
 
 
 if __name__ == '__main__':
-    #gen_example()
     rst = gen_csv('/Users/tianyu/PycharmProjects/G-Skyline/datasets/anti_2.txt', 10000)
+
     print(rst)

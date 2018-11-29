@@ -1,3 +1,4 @@
+#coding=utf-8
 from time import time
 from conf.config import logger
 
@@ -19,19 +20,25 @@ def skyline_layer_2d(pt_list, k):
     :param k:
     :return:
     """
+    #记录开始时间
     t = time()
-
+    #ALG1.1
     pt_list.sort(pt_cmp)
+    #ALG1.2
     pt_list[0].set_layer(0)
+    #ALG1.3
     max_layer = 0
+    #用一个list记录所有的tails,ALG1.4
     tails = [pt_list[0]]
     n = len(pt_list)
 
     for i in range(1, n):
+        #ALG1.6-8
         if not tails[0].dominate(pt_list[i]):
             # print("%d not dom %d" % (tails[0].label(), pt_list[i].label()))
             pt_list[i].set_layer(0)
             tails[0] = pt_list[i]
+        #ALG1.9-11
         elif tails[max_layer].dominate(pt_list[i]):
             # print("%d doms %d" % (tails[max_layer].label(), i))
             if max_layer < k - 1:
@@ -41,6 +48,7 @@ def skyline_layer_2d(pt_list, k):
             else:
                 # discard points beyond the kth layer
                 pt_list[i].set_layer(max_layer+1)
+        #ALG1.12-15
         else:
             pos = bin_dom_search(tails, pt_list[i])
             # print("find pos %d for %d" % (pos, pt_list[i].label()))
@@ -94,10 +102,10 @@ def skyline_layer_md(pt_list, k):
     for layer in layers:
         for pt in layer:
             pts.append(pt)
-    pts.sort()
+    #pts.sort()
     return layers, pts
 
-
+#用于二分查找point所处的layer
 def bin_dom_search(tails, pt):
     lo = 0
     hi = len(tails)
@@ -109,7 +117,7 @@ def bin_dom_search(tails, pt):
             lo = mid + 1
     return lo
 
-
+#定义一个双层list存储point所在的layer
 def split_layer(pts, k):
     layers = []
     for i in range(0, k):
@@ -119,7 +127,7 @@ def split_layer(pts, k):
             layers[pt.layer()].append(pt)
     return layers
 
-
+#计算parent和child关系
 def cal_parent_child(layers, k):
     for i in range(1, k):
         for pt in layers[i]:
