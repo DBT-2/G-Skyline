@@ -110,6 +110,8 @@ def preprocess(dsg, k):
     reindex(pt_list)
     dsg.set_list(pt_list)
 
+    clean_children_parents(pt_list, to_remove)
+
     logger.info("preprocess consumed %fs", time() - t)
     return final_groups
 
@@ -117,3 +119,12 @@ def preprocess(dsg, k):
 def reindex(pts):
     for i in range(0, len(pts)):
         pts[i].index = i
+
+
+def clean_children_parents(pts, removed_pts):
+    for pt in pts:
+        for removed in removed_pts:
+            if removed in pt.parents():
+                pt.parents().remove(removed)
+            if removed in pt.children():
+                pt.children().remove(removed)
