@@ -18,11 +18,5 @@ class DSG:
         # if index == 1 << 63 - 1:
         #     return self._list
 
-        i = bisect.bisect_left(self._list, index + 1)
-        if i < 0:
-            return self._list
-        elif 0 <= i < len(self._list):
-            return self._list[i:]
-        else:
-            return []
+        return self._list[index+1:]
 

@@ -5,13 +5,14 @@ from entity.DSG import DSG
 
 
 def test_2d(pts, k):
-    skyline_layer_2d(pts, k)
+    pts = skyline_layer_2d(pts, k)
+    reindex(pts)
     layers = split_layer(pts, k)
     cal_parent_child(layers, k)
 
     # print('index', 'label', 'layer', 'children')
     # for pt in pts:
-    #     print(pt.index(), pt.label(), pt.layer(), pt.children())
+    #     print(pt.index, pt.label(), pt.layer(), pt.children())
 
     dsg = DSG(pts)
     groups = ptwise_gskyline(dsg, k)
@@ -19,12 +20,13 @@ def test_2d(pts, k):
 
 
 def test_md(pts, k):
-    layers = skyline_layer_md(pts, k)
+    layers, pts = skyline_layer_md(pts, k)
+    reindex(pts)
     cal_parent_child(layers, k)
 
     # print('index', 'label', 'layer', 'children')
     # for pt in pts:
-    #     print(pt.index(), pt.label(), pt.layer(), pt.children())
+    #     print(pt.index, pt.label(), pt.layer(), pt.children())
 
     dsg = DSG(pts)
     groups = ptwise_gskyline(dsg, k)
@@ -35,6 +37,11 @@ def get_pt_by_label(pts, label):
     for pt in pts:
         if pt.label() == label:
             return pt
+
+
+def reindex(pts):
+    for i in range(0, len(pts)):
+        pts[i].index = i
 
 
 if __name__ == '__main__':

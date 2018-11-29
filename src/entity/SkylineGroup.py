@@ -7,12 +7,15 @@ class SkylineGroup:
         self._children_set = None
         self._max_layer = -1
         self._tail_set = None
+        # for lazy calculation of children_set
+        self._prev_children_set = None
+        self._new_pt = None
 
     def add(self, point):
         self._pts.append(point)
         self._pts.sort()
-        if self._max_index > point.index():
-            self._max_index = point.index()
+        if self._max_index > point.index:
+            self._max_index = point.index
 
     # point_list must be sorted by index of points
     def set_points(self, points):
@@ -80,5 +83,5 @@ class SkylineGroup:
         # return hash(str(self._set))
         h = len(self._pts)
         for pt in self._pts:
-            h = h ^ pt.index()
+            h = h ^ pt.index
         return h

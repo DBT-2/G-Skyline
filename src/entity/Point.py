@@ -30,9 +30,6 @@ class Point:
     def add_parent(self, parent):
         self._parents.add(parent)
 
-    def index(self):
-        return self._index
-
     def is_skyline(self):
         return self._layer == 0
 
@@ -71,37 +68,37 @@ class Point:
     # compare by index
     def __lt__(self, other):
         if isinstance(other, Point):
-            return self._index < other.index()
+            return self.index < other.index
         elif isinstance(other, int):
-            return self._index < other
+            return self.index < other
         else:
             return False
 
     def __eq__(self, other):
         if isinstance(other, Point):
-            return self._index == other.index()
+            return self.index == other.index
         elif isinstance(other, int):
-            return self._index == other
+            return self.index == other
         else:
             return False
 
     def __cmp__(self, other):
         o_idx = 0
         if isinstance(other, Point):
-            o_idx = other.index()
+            o_idx = other.index
         elif isinstance(other, int):
             o_idx = other
         else:
             raise TypeError(type(other))
-        if self._index < o_idx:
+        if self.index < o_idx:
             return -1
-        elif self._index == o_idx:
+        elif self.index == o_idx:
             return 0
         else:
             return 1
 
     def __hash__(self):
-        return hash(self._index)
+        return hash(self.index)
 
     def __repr__(self):
         return str(self._label)
