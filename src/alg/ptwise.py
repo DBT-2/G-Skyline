@@ -1,6 +1,7 @@
 from time import time
 
 from conf.config import logger
+from data_gen import pt_cmp
 from entity.SkylineGroup import SkylineGroup
 
 
@@ -27,19 +28,21 @@ def ptwise_gskyline(dsg, k):
         t = time()
 
         for curr_group in curr_level_groups:
-            # logger.debug("current group: %s", curr_group)
+            logger.debug("current group: %s", curr_group)
             children_set = curr_group.children_set()
             max_layer = curr_group.max_layer()
             # logger.debug("children set: %s", children_set)
 
             t_set = curr_group.tail_set(dsg)
-            # logger.debug("tail set before: %s", t_set)
+            logger.debug("tail set before: %s", t_set)
+
             filter_tail_set(t_set, children_set, max_layer)
             # logger.debug("tail set size : %d", len(t_set))
-            # logger.debug("tail set after: %s", t_set)
+            logger.debug("tail set after: %s", t_set)
 
             for pt in t_set:
                 if not can_add(curr_group, pt):
+                    logger.debug("%s cannot be added into %s", pt, curr_group)
                     continue
 
                 new_group = SkylineGroup(i)
@@ -57,9 +60,8 @@ def ptwise_gskyline(dsg, k):
                         new_max_layer = pt.layer()
                     new_group.set_children_set(children_set.union(pt.children()))
                     new_group.set_max_layer(new_max_layer)
-
-                    new_group.set_points(new_pts)
                     new_group.set_max_index(max_index)
+                new_group.set_points(new_pts)
                 # logger.debug("new set: %s", new_pts)
                 # logger.debug("new_min_index: %s", max_index)
 
@@ -67,7 +69,7 @@ def ptwise_gskyline(dsg, k):
         curr_level_groups = next_level_groups
         next_level_groups = []
         logger.info("Level %d consumed %fs, found %d skyline groups", i, time() - t, len(curr_level_groups))
-        # logger.info("Level %d : %s", i, curr_level_groups)
+        logger.debug("Level %d : %s", i, curr_level_groups)
     for group in final_groups:
         curr_level_groups.append(group)
     return curr_level_groups
@@ -94,6 +96,7 @@ def preprocess(dsg, k):
     for pt in pt_list:
         u_group = pt.unit_group()
         if len(u_group) > k:
+            logger.debug("UGroup of %s is %s", pt, u_group)
             to_remove.append(pt)
         elif len(u_group) == k:
             skyline_group = SkylineGroup(k)

@@ -51,7 +51,7 @@ def skyline_layer_2d(pt_list, k):
     for pt in pt_list:
         if pt.layer() < k:
             new_list.append(pt)
-    new_list.sort()
+    new_list.sort(pt_cmp)
     return new_list
 
 
@@ -94,7 +94,7 @@ def skyline_layer_md(pt_list, k):
     for layer in layers:
         for pt in layer:
             pts.append(pt)
-    pts.sort()
+    pts.sort(pt_cmp)
     return layers, pts
 
 

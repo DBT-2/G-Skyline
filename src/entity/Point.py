@@ -70,29 +70,29 @@ class Point:
 
     def __eq__(self, other):
         if isinstance(other, Point):
-            return self.index == other.index
+            return self._label == other._label
         elif isinstance(other, int):
-            return self.index == other
+            return self._label == other
         else:
             return False
 
     def __cmp__(self, other):
         o_idx = 0
         if isinstance(other, Point):
-            o_idx = other.index
+            o_idx = other._label
         elif isinstance(other, int):
             o_idx = other
         else:
             raise TypeError(type(other))
-        if self.index < o_idx:
+        if self._label < o_idx:
             return -1
-        elif self.index == o_idx:
+        elif self._label == o_idx:
             return 0
         else:
             return 1
 
     def __hash__(self):
-        return hash(self.index)
+        return hash(self._label)
 
     def __repr__(self):
         return str(self._label)
