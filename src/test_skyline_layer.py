@@ -1,3 +1,5 @@
+from time import time
+
 from alg.skyline_layer import skyline_layer_2d, split_layer, cal_parent_child, skyline_layer_md
 from alg.unitGroupWise import buildUnitGroup,preprocess,cal_tail_set,subset,unitWise,unitGroupWise
 from data_gen import gen_example, gen_csv
@@ -42,19 +44,22 @@ def reindex(pts):
 
 
 if __name__ == '__main__':
-    k = 3
-    pts = gen_csv('/Users/tianyu/PycharmProjects/G-Skyline/datasets/corr_8.txt', 1000)
-    layers,pts=skyline_layer_md(pts,k)
-    #layers=split_layer(pts,k)
+    k = 4
+    pts=gen_example()
+    t = time()
+    pts = gen_csv('/Users/tianyu/PycharmProjects/G-Skyline/datasets/anti_2.txt', 10000)
+    layers,pts =skyline_layer_md(pts,k)
+    # layers=split_layer(pts,k)
     cal_parent_child(layers,k)
     uGroups = buildUnitGroup(layers, k)
     uGroups = preprocess(uGroups, k)
     cal_tail_set(uGroups)
     uGroups = subset(uGroups, k)
     length = unitWise(uGroups, k)
+    print time() - t
 
     print length
-    pts = gen_example()
-    test_md(pts, 4)
+    #pts = gen_example()
+    #test_md(pts, 4)
 
 
